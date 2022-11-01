@@ -828,7 +828,7 @@ impl Session {
 
     fn get_block_height(&mut self, output: &mut Vec<String>) {
         let height = self.interpreter.get_block_height();
-        output.push(green!(format!("Current height: {}", height)));
+        output.push("{}", height);
     }
 
     fn get_account_name(&self, address: &String) -> Option<&String> {
