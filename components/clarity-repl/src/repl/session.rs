@@ -919,26 +919,26 @@ impl Session {
             let tokens = self.interpreter.get_tokens();
             let mut headers = vec!["Address".to_string()];
             headers.append(&mut tokens.clone());
-            let mut headers_cells = vec![];
+            let mut headers_cells = String::new();
             for header in headers.iter() {
-                headers_cells.push(Cell::new(&header));
+                headers_cells.push_str( &format!("{} ", header.as_str()));
             }
-            let mut table = Table::new();
-            table.add_row(Row::new(headers_cells));
+            let mut table = String::new();
+            table.push_str(&format!("{}\n", headers_cells.as_str()));
             for account in accounts.iter() {
-                let mut cells = vec![];
+                let mut cells = String::new();
 
                 if let Some(name) = self.get_account_name(account) {
-                    cells.push(Cell::new(&format!("{} ({})", account, name)));
+                    cells.push_str(&format!("{} ({}) ", account, name));
                 } else {
-                    cells.push(Cell::new(account));
+                    cells.push_str(&format!("{} ",account));
                 }
 
                 for token in tokens.iter() {
                     let balance = self.interpreter.get_balance_for_account(account, token);
-                    cells.push(Cell::new(&format!("{}", balance)));
+                    cells.push_str(&format!("{}", balance));
                 }
-                table.add_row(Row::new(cells));
+                table.push_str(&format!("{}\n",cells));
             }
             output.push(format!("{}", table));
         }
@@ -947,8 +947,7 @@ impl Session {
     #[cfg(feature = "cli")]
     fn get_contracts(&self, output: &mut Vec<String>) {
         if self.contracts.len() > 0 {
-            let mut table = Table::new();
-            table.add_row(row!["Contract identifier", "Public functions"]);
+            let mut table = String::from("contract_identifier public_functions \n");
             let contracts = self.contracts.clone();
             for (contract_id, methods) in contracts.iter() {
                 if !contract_id.starts_with(&BOOT_TESTNET_ADDRESS)
@@ -958,18 +957,13 @@ impl Session {
                     for (method_name, method_args) in methods.iter() {
                         let formatted_args = if method_args.len() == 0 {
                             format!("")
-                        } else if method_args.len() == 1 {
-                            format!(" {}", method_args.join(" "))
                         } else {
-                            format!("\n    {}", method_args.join("\n    "))
+                            format!(" {}", method_args.join(" "))
                         };
                         formatted_methods.push(format!("({}{})", method_name, formatted_args));
                     }
-                    let formatted_spec = format!("{}", formatted_methods.join("\n"));
-                    table.add_row(Row::new(vec![
-                        Cell::new(&contract_id),
-                        Cell::new(&formatted_spec),
-                    ]));
+                    let formatted_spec = format!("{}", formatted_methods.join(" "));
+                    table.push_str(&format!("{} {}\n", contract_id, formatted_spec));
                 }
             }
             output.push(format!("{}", table));
