@@ -90,6 +90,7 @@ impl Terminal {
     }
 
     pub fn start(&mut self) {
+        println!("command_line_start");
         println!("{}", green!(format!("clarity-repl v{}", VERSION.unwrap())));
         println!("{}", black!("Enter \"::help\" for usage hints."));
         println!("{}", black!("Connected to a transient in-memory database."));
@@ -102,6 +103,7 @@ impl Terminal {
             }
         };
         println!("{}", output);
+        println!("command_line_end");
         let mut editor = Editor::<()>::new();
         let mut ctrl_c_acc = 0;
         let mut input_buffer = vec![];

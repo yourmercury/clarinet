@@ -243,9 +243,9 @@ impl Session {
             cmd if cmd.starts_with("::set_tx_sender") => {
                 self.parse_and_set_tx_sender(&mut output, cmd)
             }
-            cmd if cmd.starts_with("::get_assets_maps") => self.get_accounts(&mut output),
+            cmd if cmd.starts_with("::get_assets_maps") => self.get_assest_map(&mut output),
             cmd if cmd.starts_with("::get_costs") => self.get_costs(&mut output, cmd),
-            cmd if cmd.starts_with("::get_contracts") => self.get_contracts(&mut output),
+            cmd if cmd.starts_with("::get_contracts") => self.get_contracts_functions(&mut output),
             cmd if cmd.starts_with("::get_block_height") => self.get_block_height(&mut output),
             cmd if cmd.starts_with("::advance_chain_tip") => {
                 self.parse_and_advance_chain_tip(&mut output, cmd)
@@ -828,7 +828,9 @@ impl Session {
 
     fn get_block_height(&mut self, output: &mut Vec<String>) {
         let height = self.interpreter.get_block_height();
+        output.push(String::from("get_block_height_start"));
         output.push(format!("{}", height));
+        output.push(String::from("get_block_height_end"));
     }
 
     fn get_account_name(&self, address: &String) -> Option<&String> {
@@ -913,6 +915,12 @@ impl Session {
     }
 
     #[cfg(feature = "cli")]
+    fn get_assest_map(&self, output: &mut Vec<String>) {
+        output.push(String::from("get_assets_maps_start"));
+        self.get_accounts(output);
+        output.push(String::from("get_assets_maps_end"));
+    }
+
     fn get_accounts(&self, output: &mut Vec<String>) {
         let accounts = self.interpreter.get_accounts();
         if accounts.len() > 0 {
@@ -936,15 +944,22 @@ impl Session {
 
                 for token in tokens.iter() {
                     let balance = self.interpreter.get_balance_for_account(account, token);
-                    cells.push_str(&format!("{}", balance));
+                    cells.push_str(&format!("{} ", balance));
                 }
                 table.push_str(&format!("{}\n",cells));
             }
-            output.push(format!("{}", table));
+            let mut chars = table.chars();
+            chars.next_back();
+            output.push(chars.as_str().to_string());
         }
     }
 
     #[cfg(feature = "cli")]
+    fn get_contracts_functions(&self, output: &mut Vec<String>) {
+        output.push(String::from("get_contracts_start"));
+        self.get_accounts(output);
+        output.push(String::from("get_contracts_end"));        
+    }
     fn get_contracts(&self, output: &mut Vec<String>) {
         if self.contracts.len() > 0 {
             let mut table = String::from("contract_identifier public_functions \n");
@@ -966,7 +981,9 @@ impl Session {
                     table.push_str(&format!("{} {}\n", contract_id, formatted_spec));
                 }
             }
-            output.push(format!("{}", table));
+            let mut chars = table.chars();
+            chars.next_back();
+            output.push(chars.as_str().to_string());
         }
     }
 
