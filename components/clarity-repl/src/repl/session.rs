@@ -957,7 +957,7 @@ impl Session {
     #[cfg(feature = "cli")]
     fn get_contracts_functions(&self, output: &mut Vec<String>) {
         output.push(String::from("get_contracts_start"));
-        self.get_accounts(output);
+        self.get_contracts(output);
         output.push(String::from("get_contracts_end"));        
     }
     fn get_contracts(&self, output: &mut Vec<String>) {
