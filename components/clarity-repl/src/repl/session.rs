@@ -973,12 +973,14 @@ impl Session {
                         let formatted_args = if method_args.len() == 0 {
                             format!("")
                         } else {
-                            format!(" {}", method_args.join(" "))
+                            format!("{}", method_args.join(" "))
                         };
-                        formatted_methods.push(format!("({}{})", method_name, formatted_args));
+                        formatted_methods.push(format!("({}{}),", method_name, formatted_args));
                     }
                     let formatted_spec = format!("{}", formatted_methods.join(" "));
-                    table.push_str(&format!("{} {}\n", contract_id, formatted_spec));
+                    let mut chars = formatted_spec.chars();
+                    chars.next_back();
+                    table.push_str(&format!("{},{}\n", contract_id, chars.as_str().to_string()));
                 }
             }
             let mut chars = table.chars();
