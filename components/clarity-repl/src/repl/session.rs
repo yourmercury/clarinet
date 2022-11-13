@@ -836,8 +836,10 @@ impl Session {
     }
 
     fn get_block_height(&mut self, output: &mut Vec<String>) {
+        output.push(String::from("clarinet_cli_print_start"));
         let height = self.interpreter.get_block_height();
         output.push(green!(format!("Current height: {}", height)));
+        output.push(String::from("clarinet_cli_print_end"));
     }
 
     fn get_block_height_gui(&mut self, output: &mut Vec<String>) {
@@ -930,6 +932,7 @@ impl Session {
 
     #[cfg(feature = "cli")]
     fn get_accounts(&self, output: &mut Vec<String>) {
+        output.push(String::from("clarinet_cli_print_start"));
         let accounts = self.interpreter.get_accounts();
         if accounts.len() > 0 {
             let tokens = self.interpreter.get_tokens();
@@ -956,7 +959,11 @@ impl Session {
                 }
                 table.add_row(Row::new(cells));
             }
-            output.push(format!("{}", table));
+            let table_string = format!("{}", table);
+            let mut chars = table_string.chars();
+            chars.next_back();
+            output.push(chars.as_str().to_string());
+            output.push(String::from("clarinet_cli_print_end"));
         }
     }
 
@@ -1002,6 +1009,7 @@ impl Session {
 
     #[cfg(feature = "cli")]
     fn get_contracts(&self, output: &mut Vec<String>) {
+        output.push(String::from("clarinet_cli_print_start"));
         if self.contracts.len() > 0 {
             let mut table = Table::new();
             table.add_row(row!["Contract identifier", "Public functions"]);
@@ -1028,7 +1036,11 @@ impl Session {
                     ]));
                 }
             }
-            output.push(format!("{}", table));
+            let table_string = format!("{}", table);
+            let mut chars = table_string.chars();
+            chars.next_back();
+            output.push(chars.as_str().to_string());
+            output.push(String::from("clarinet_cli_print_end"));
         }
     }
 
