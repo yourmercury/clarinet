@@ -246,12 +246,20 @@ impl Session {
             cmd if cmd.starts_with("::get_assets_maps_gui") => {
                 self.get_assets_maps_gui(&mut output)
             }
-            cmd if cmd.starts_with("::get_assets_maps") => self.get_accounts(&mut output),
+            cmd if cmd.starts_with("::get_assets_maps") => {
+                output.push(String::from("clarinet_cli_print_start"));
+                self.get_accounts(&mut output);
+                output.push(String::from("clarinet_cli_print_end"));
+            }
             cmd if cmd.starts_with("::get_costs") => self.get_costs(&mut output, cmd),
             cmd if cmd.starts_with("::get_contracts_gui") => {
                 self.get_contracts_functions(&mut output)
             }
-            cmd if cmd.starts_with("::get_contracts") => self.get_contracts(&mut output),
+            cmd if cmd.starts_with("::get_contracts") => {
+                output.push(String::from("clarinet_cli_print_start"));
+                self.get_contracts(&mut output);
+                output.push(String::from("clarinet_cli_print_end"));
+            }
             cmd if cmd.starts_with("::get_block_height_gui") => {
                 self.get_block_height_gui(&mut output)
             }
@@ -932,7 +940,6 @@ impl Session {
 
     #[cfg(feature = "cli")]
     fn get_accounts(&self, output: &mut Vec<String>) {
-        output.push(String::from("clarinet_cli_print_start"));
         let accounts = self.interpreter.get_accounts();
         if accounts.len() > 0 {
             let tokens = self.interpreter.get_tokens();
@@ -963,7 +970,6 @@ impl Session {
             let mut chars = table_string.chars();
             chars.next_back();
             output.push(chars.as_str().to_string());
-            output.push(String::from("clarinet_cli_print_end"));
         }
     }
 
@@ -1009,7 +1015,6 @@ impl Session {
 
     #[cfg(feature = "cli")]
     fn get_contracts(&self, output: &mut Vec<String>) {
-        output.push(String::from("clarinet_cli_print_start"));
         if self.contracts.len() > 0 {
             let mut table = Table::new();
             table.add_row(row!["Contract identifier", "Public functions"]);
@@ -1040,7 +1045,6 @@ impl Session {
             let mut chars = table_string.chars();
             chars.next_back();
             output.push(chars.as_str().to_string());
-            output.push(String::from("clarinet_cli_print_end"));
         }
     }
 
