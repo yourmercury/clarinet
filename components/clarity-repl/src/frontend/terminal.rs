@@ -94,15 +94,6 @@ impl Terminal {
         println!("{}", green!(format!("clarity-repl v{}", VERSION.unwrap())));
         println!("{}", black!("Enter \"::help\" for usage hints."));
         println!("{}", black!("Connected to a transient in-memory database."));
-
-        let output = match self.session.display_digest() {
-            Ok(output) => output,
-            Err(e) => {
-                println!("{}", e);
-                std::process::exit(1);
-            }
-        };
-        println!("{}", output);
         println!("command_line_end");
         let mut editor = Editor::<()>::new();
         let mut ctrl_c_acc = 0;
